@@ -5,7 +5,6 @@ import gdgStudy.gdgSpring.user.dto.response.UserSaveResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,7 +39,7 @@ public class UserService {
             User updateUser = User.builder()
                     .username(updateUserRequestDto.getUsername())
                     .password(updateUserRequestDto.getPassword())
-                    .email(updateUserRequestDto.getPassword())
+                    .email(updateUserRequestDto.getEmail())
                     .build();
 
             return userRepository.save(updateUser);
