@@ -11,49 +11,41 @@ import java.util.List;
 @Service
 public class UserService {
     @Autowired
-   private UserRepository userRepository;
+    private UserRepository userRepository;
 
     // CREATE (생성)
-    public UserSaveResponseDto createUser(UserSaveRequestDto userDto) {
-        User user = User.builder()
-                .username(userDto.getUsername())
-                .password(userDto.getPassword())
-                .email(userDto.getEmail())
-                .build();
-
-        User savedUser = userRepository.save(user);
-        return new UserSaveResponseDto(savedUser.getUsername(), savedUser.getEmail());
+    public User createUser(UserSaveRequestDto userSaveRequestDto) {
+        User user = new User(userSaveRequestDto);
+        return userRepository.save(user);
     }
 
     // READ (조회)
-    public List<User> findAll() {
-        List<User> users = userRepository.findAll();
-        List<UserSaveResponseDto> userSaveResponseDtos = new ArrayList<>();
-        for (User user : users) {
-            userSaveResponseDtos.add(new UserSaveResponseDto(user.getUsername(), user.getEmail()));
-        }
-
-        return userSaveResponseDtos;
-
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public List<User> getUserById(Long id) {
+        return (List<User>) userRepository.findById(id).orElse(null);
     }
 
-    public List<User> findByUsername(String username) {
+    public List<User> getUsersByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     // UPDATE (수정)
-    public User updateUser(Long id, User updateUser) {
+    public User updateUser(Long id, UserSaveRequestDto updateUserRequestDto) {
         User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser != null) {
-            existingUser.setUsername(updateUser.getUsername());
-            existingUser.setPassward(updateUser.getPassword());
 
-            return userRepository.save(existingUser);
+        if (existingUser != null) {
+            User updateUser = User.builder()
+                    .username(updateUserRequestDto.getUsername())
+                    .password(updateUserRequestDto.getPassword())
+                    .email(updateUserRequestDto.getPassword())
+                    .build();
+
+            return userRepository.save(updateUser);
         }
+
         return null;
     }
 
@@ -65,9 +57,7 @@ public class UserService {
             userRepository.delete(existingUser);
             return true;
         }
+
         return false;
     }
-
-
-
 }
