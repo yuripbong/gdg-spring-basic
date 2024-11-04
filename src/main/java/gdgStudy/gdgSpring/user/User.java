@@ -31,8 +31,4 @@ public class User {
         this.email = userSaveRequestDto.getEmail();
 
     }
-
-
-
-
 }
