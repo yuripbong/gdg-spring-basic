@@ -8,6 +8,7 @@
 - username
 - password
 - email
+
 Post, Comment 엔티티 -> 각 유저는 여러 개의 게시물과 댓글 작성 가능
 Like 엔티티 -> 각 유저가 여러 게시물에 좋아요를 남길 수 있다.
 
@@ -18,6 +19,7 @@ Like 엔티티 -> 각 유저가 여러 게시물에 좋아요를 남길 수 있�
 - author
 - user_id (PK)
 - create_date
+
 User 엔티티와 N:1 -> 각 게시물은 한 유저의 소유
 Comment, Like 엔티티 -> 하나의 게시물에 여러 댓글과 좋아요가 달릴 수 있다.
 
@@ -28,6 +30,7 @@ Comment, Like 엔티티 -> 하나의 게시물에 여러 댓글과 좋아요가 
 - comment_date
 - user_id (PK)
 - post_id (PK)
+
 User 엔티티와 N:1 관계 -> 각 댓글은 한 유저가 작성
 Post 엔티티 N:1 관계 -> 각 댓글은 하나의 게시물에 속함
 
@@ -37,6 +40,7 @@ Post 엔티티 N:1 관계 -> 각 댓글은 하나의 게시물에 속함
 - count
 - user_id (PK)
 - post_id (PK)
+
 User, Post 엔티티와 N:1 -> 각 좋아요는 특정 유저가 특정 게시물에 남긴 하나의 좋아요를 의미
 
 ---
