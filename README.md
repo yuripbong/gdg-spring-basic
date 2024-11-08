@@ -1,6 +1,7 @@
 
 # 블로그 ERD
-<img width="1293" alt="image" src="https://github.com/user-attachments/assets/85e27f09-30f5-4526-8a23-27e7f95f3634">
+<img width="1369" alt="image" src="https://github.com/user-attachments/assets/af2927a9-2182-4d96-bc8f-169220030858">
+
 
 작성중!!
 
