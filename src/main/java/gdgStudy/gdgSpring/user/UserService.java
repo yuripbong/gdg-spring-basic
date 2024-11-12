@@ -1,9 +1,11 @@
 package gdgStudy.gdgSpring.user;
 
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
+import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
 import gdgStudy.gdgSpring.user.dto.response.UserSaveResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,20 +34,16 @@ public class UserService {
     }
 
     // UPDATE (수정)
-    public User updateUser(Long id, UserSaveRequestDto updateUserRequestDto) {
-        User existingUser = userRepository.findById(id).orElse(null);
+    @Transactional
+    public User updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
+        User existingUser = userRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 없습니다. id = " + id));
 
-        if (existingUser != null) {
-            User updateUser = User.builder()
-                    .username(updateUserRequestDto.getUsername())
-                    .password(updateUserRequestDto.getPassword())
-                    .email(updateUserRequestDto.getEmail())
-                    .build();
-
-            return userRepository.save(updateUser);
-        }
-
-        return null;
+        existingUser.update(
+                updateUserRequestDto.getUsername(),
+                updateUserRequestDto.getPassword(),
+                updateUserRequestDto.getEmail());
+        return existingUser;
     }
 
     // DELETE (삭제)

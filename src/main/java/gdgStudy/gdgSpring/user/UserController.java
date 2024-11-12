@@ -1,6 +1,7 @@
 package gdgStudy.gdgSpring.user;
 
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
+import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
 import gdgStudy.gdgSpring.user.dto.response.UserSaveResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class UserController {
 
     // UPDATE (수정)
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody UserSaveRequestDto updateUserRequestDto) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequestDto updateUserRequestDto) {
         User user = userService.updateUser(id, updateUserRequestDto);
 
         if (user == null) {
