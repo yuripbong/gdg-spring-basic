@@ -23,22 +23,28 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String nickname;
+
     @Builder
-    public User(String username, String password, String email) {
+    public User(String username, String password, String email, String nickname) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.nickname = nickname;
     }
 
     public User(UserSaveRequestDto userSaveRequestDto) {
         this.username = userSaveRequestDto.getUsername();
         this.password = userSaveRequestDto.getPassword();
         this.email = userSaveRequestDto.getEmail();
+        this.nickname = userSaveRequestDto.getNickname();
     }
 
-    public void update(String username, String password, String email) {
+    public void update(String username, String password, String email, String nickname) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.nickname = nickname;
     }
 }

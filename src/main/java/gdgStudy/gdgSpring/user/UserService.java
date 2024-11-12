@@ -42,7 +42,8 @@ public class UserService {
         existingUser.update(
                 updateUserRequestDto.getUsername(),
                 updateUserRequestDto.getPassword(),
-                updateUserRequestDto.getEmail());
+                updateUserRequestDto.getEmail(),
+                updateUserRequestDto.getNickname());
         return existingUser;
     }
 
