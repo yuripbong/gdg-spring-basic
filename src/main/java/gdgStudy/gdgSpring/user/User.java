@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter // 모든 필드의 getter 메소드 자동 생성
-@NoArgsConstructor // 파라미터가 없는 기본 생성자 생성
-@AllArgsConstructor // 모든 필드 값을 파라미터로 받는 생성자 생성
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 파라미터가 없는 기본 생성자 생성
 @Entity(name = "users")
 public class User {
 
