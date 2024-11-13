@@ -1,5 +1,6 @@
 package gdgStudy.gdgSpring.user.dto.request;
 
+import gdgStudy.gdgSpring.user.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,14 @@ public class UserSaveRequestDto {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
+    }
+
+    public User toEntity() {
+        return User.builder()
+                .username(username)
+                .password(password)
+                .email(email)
+                .nickname(nickname)
+                .build();
     }
 }
