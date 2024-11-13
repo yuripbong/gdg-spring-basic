@@ -4,16 +4,18 @@ import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter // 모든 필드의 getter 메소드 자동 생성
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 파라미터가 없는 기본 생성자 생성
+@Getter
 @Entity(name = "users")
 public class User {
 
-    @Id // PK 지정
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // PK 1씩 자동 증가
+    // NoArgsConstructor 없애고 만든 기본 생성자
+    public User() {}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true) // 엔티티 클래스의 필드와 DB 테이블의 컬럼 간 매핑 지정
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -24,14 +26,6 @@ public class User {
 
     @Column(nullable = false)
     private String nickname;
-
-    @Builder
-    public User(String username, String password, String email, String nickname) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.nickname = nickname;
-    }
 
     public User(UserSaveRequestDto userSaveRequestDto) {
         this.username = userSaveRequestDto.getUsername();
