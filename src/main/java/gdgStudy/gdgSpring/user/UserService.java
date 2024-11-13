@@ -11,12 +11,16 @@ import java.util.List;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    // 의존성 주입
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // CREATE (생성)
     public User createUser(UserSaveRequestDto userSaveRequestDto) {
-        User user = new User(userSaveRequestDto);
+        User user = new User(userSaveRequestDto); // 생성자 만듦 (새로운 엔티티)
         return userRepository.save(user);
     }
 
@@ -33,12 +37,13 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    // UPDATE (수정)
+    // UPDATE (수정) - 옵셔널 처리
     @Transactional
     public User updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
         User existingUser = userRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 유저가 없습니다. id = " + id));
 
+        // save로 수정 알아보기
         existingUser.update(
                 updateUserRequestDto.getUsername(),
                 updateUserRequestDto.getPassword(),

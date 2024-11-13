@@ -13,8 +13,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    // 의존성 주입 (Autowired 비추)
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     // CREATE (생성)
     @PostMapping
