@@ -2,11 +2,13 @@ package gdgStudy.gdgSpring.user;
 
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
+import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -18,27 +20,29 @@ public class UserService {
     }
 
     // CREATE (생성)
-    public User createUser(UserSaveRequestDto userSaveRequestDto) {
+    public UserResponseDto createUser(UserSaveRequestDto userSaveRequestDto) {
         User user = new User(userSaveRequestDto); // 생성자 만듦 (새로운 엔티티)
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return new UserResponseDto(savedUser);
     }
 
     // READ (조회)
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(UserResponseDto::new)
+                .collect(Collectors.toList());
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
+    public Optional<UserResponseDto> getUserById(Long id) {
 
-    public Optional<List<User>> getUsersByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findById(id)
+                .map(UserResponseDto::new);
     }
 
     // UPDATE (수정) - 옵셔널 처리
-    @Transactional
-    public User updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
+    public UserResponseDto updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
         User existingUser = userRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 유저가 없습니다. id = " + id));
 
@@ -48,7 +52,8 @@ public class UserService {
                 updateUserRequestDto.getPassword(),
                 updateUserRequestDto.getEmail(),
                 updateUserRequestDto.getNickname());
-        return existingUser;
+
+        return new UserResponseDto(existingUser);
     }
 
     // DELETE (삭제)
