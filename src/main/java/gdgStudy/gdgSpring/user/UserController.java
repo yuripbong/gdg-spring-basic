@@ -2,6 +2,7 @@ package gdgStudy.gdgSpring.user;
 
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
+import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,37 +22,28 @@ public class UserController {
 
     // CREATE (생성)
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserSaveRequestDto userSaveRequestDto) {
-        // User -> responseDto 반환으로 변경
-        User createdUser = userService.createUser(userSaveRequestDto);
-        return ResponseEntity.ok(createdUser);
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserSaveRequestDto userSaveRequestDto) {
+        UserResponseDto userResponseDto = userService.createUser(userSaveRequestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userResponseDto);
     }
 
     // READ (조회)
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        List<UserResponseDto> userList = userService.getAllUsers();
 
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(userList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-        User user = userService.getUserById(id);
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable("id") Long id) {
+        Optional<UserResponseDto> responseDto = userService.getUserById(id);
 
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return ResponseEntity.ok(user);
-        }
-    }
-
-    @GetMapping("/byusername/{username}")
-    public ResponseEntity<List<User>> getUserByUsername(@PathVariable("username") String username) {
-        Optional<List<User>> users = userService.getUsersByUsername(username);
-
-        if (users.isPresent()) {
-            return ResponseEntity.ok(users.get());
+        if (responseDto.isPresent()) {
+            return ResponseEntity.ok(responseDto.get());
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -59,8 +51,8 @@ public class UserController {
 
     // UPDATE (수정)
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequestDto updateUserRequestDto) {
-        User user = userService.updateUser(id, updateUserRequestDto);
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequestDto updateUserRequestDto) {
+        UserResponseDto user = userService.updateUser(id, updateUserRequestDto);
 
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -75,7 +67,7 @@ public class UserController {
         boolean deleted = userService.deleteUser(id);
 
         if (deleted) {
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
