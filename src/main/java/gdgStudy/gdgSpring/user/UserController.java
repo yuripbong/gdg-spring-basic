@@ -2,13 +2,12 @@ package gdgStudy.gdgSpring.user;
 
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
-import gdgStudy.gdgSpring.user.dto.response.UserSaveResponseDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,6 +22,7 @@ public class UserController {
     // CREATE (생성)
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody UserSaveRequestDto userSaveRequestDto) {
+        // User -> responseDto 반환으로 변경
         User createdUser = userService.createUser(userSaveRequestDto);
         return ResponseEntity.ok(createdUser);
     }
@@ -48,9 +48,13 @@ public class UserController {
 
     @GetMapping("/byusername/{username}")
     public ResponseEntity<List<User>> getUserByUsername(@PathVariable("username") String username) {
-        List<User> users = userService.getUsersByUsername(username);
+        Optional<List<User>> users = userService.getUsersByUsername(username);
 
-        return ResponseEntity.ok(users);
+        if (users.isPresent()) {
+            return ResponseEntity.ok(users.get());
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // UPDATE (수정)
