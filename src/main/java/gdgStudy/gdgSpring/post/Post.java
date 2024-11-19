@@ -1,6 +1,7 @@
 package gdgStudy.gdgSpring.post;
 
 import gdgStudy.gdgSpring.common.BaseTimeEntity;
+import gdgStudy.gdgSpring.post.dto.request.PostSaveRequestDto;
 import gdgStudy.gdgSpring.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,6 +25,12 @@ public class Post extends BaseTimeEntity {
 
     @ManyToOne
     private User user;
+
+    public Post(PostSaveRequestDto postSaveRequestDto) {
+        this.title = postSaveRequestDto.getTitle();
+        this.content = postSaveRequestDto.getContent();
+        this.user = postSaveRequestDto.getUser();
+    }
 
     public void update(String title, String content) {
         this.title = title;
