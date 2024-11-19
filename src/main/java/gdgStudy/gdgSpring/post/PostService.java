@@ -5,6 +5,7 @@ import gdgStudy.gdgSpring.post.dto.response.PostSaveResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,5 +31,23 @@ public class PostService {
         return posts.stream()
                 .map(PostSaveResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public Optional<PostSaveResponseDto> getPostByID(Long id) {
+
+        return postRepository.findById(id)
+                .map(PostSaveResponseDto::new);
+    }
+
+    // DELETE (삭제)
+    public boolean deletePost(Long id) {
+        Optional<Post> existingPost = postRepository.findById(id);
+
+        if (existingPost.isPresent()) {
+            postRepository.delete(existingPost.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }
