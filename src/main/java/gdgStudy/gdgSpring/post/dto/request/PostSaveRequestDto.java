@@ -8,5 +8,5 @@ public class PostSaveRequestDto {
 
     private String title;
     private String content;
-    private User user;
+    private Long userId;
 }
