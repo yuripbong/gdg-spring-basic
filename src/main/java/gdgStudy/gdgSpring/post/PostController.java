@@ -1,7 +1,9 @@
 package gdgStudy.gdgSpring.post;
 
 import gdgStudy.gdgSpring.post.dto.request.PostSaveRequestDto;
+import gdgStudy.gdgSpring.post.dto.request.PostUpdateRequestDto;
 import gdgStudy.gdgSpring.post.dto.response.PostSaveResponseDto;
+import gdgStudy.gdgSpring.post.dto.response.PostUpdateResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,18 @@ public class PostController {
         }
     }
 
+    // UPDATE (수정)
+    @PutMapping("/api/posts/{id}")
+    public ResponseEntity<PostUpdateResponseDto> updatePostById(@PathVariable Long id, @RequestBody PostUpdateRequestDto postUpdateRequestDto) {
+        PostUpdateResponseDto postSaveResponseDto = postService.updatePost(id, postUpdateRequestDto);
+
+        if (postSaveResponseDto != null) {
+            return ResponseEntity.ok(postSaveResponseDto);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     // DELETE (삭제)
     @DeleteMapping("/api/posts/{id}")
     public ResponseEntity<PostSaveResponseDto> deletePost(@PathVariable Long id) {
@@ -58,5 +72,4 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
 }

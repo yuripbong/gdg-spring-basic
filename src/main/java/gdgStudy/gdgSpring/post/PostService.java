@@ -1,8 +1,11 @@
 package gdgStudy.gdgSpring.post;
 
 import gdgStudy.gdgSpring.post.dto.request.PostSaveRequestDto;
+import gdgStudy.gdgSpring.post.dto.request.PostUpdateRequestDto;
 import gdgStudy.gdgSpring.post.dto.response.PostSaveResponseDto;
+import gdgStudy.gdgSpring.post.dto.response.PostUpdateResponseDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +40,20 @@ public class PostService {
 
         return postRepository.findById(id)
                 .map(PostSaveResponseDto::new);
+    }
+
+    // UPDATE (수정)
+    @Transactional
+    public PostUpdateResponseDto updatePost(Long id, PostUpdateRequestDto postUpdateRequestDto) {
+        Post existingPost = postRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 유저가 없습니다. id = " + id));
+
+        existingPost.update(
+                postUpdateRequestDto.getTitle(),
+                postUpdateRequestDto.getContent()
+        );
+
+        return new PostUpdateResponseDto(existingPost);
     }
 
     // DELETE (삭제)
