@@ -4,6 +4,8 @@ import gdgStudy.gdgSpring.post.dto.request.PostSaveRequestDto;
 import gdgStudy.gdgSpring.post.dto.request.PostUpdateRequestDto;
 import gdgStudy.gdgSpring.post.dto.response.PostSaveResponseDto;
 import gdgStudy.gdgSpring.post.dto.response.PostUpdateResponseDto;
+import gdgStudy.gdgSpring.user.User;
+import gdgStudy.gdgSpring.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +16,19 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
     // CREATE (생성)
     public PostSaveResponseDto createPost(PostSaveRequestDto postSaveRequestDto) {
-        Post post = new Post(postSaveRequestDto);
+        User user = userRepository.findById(postSaveRequestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + postSaveRequestDto.getUserId()));
+
+        Post post = new Post(postSaveRequestDto, user);
         Post savedPost = postRepository.save(post);
 
         return new PostSaveResponseDto(savedPost);
