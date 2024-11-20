@@ -3,6 +3,7 @@ package gdgStudy.gdgSpring.post;
 import gdgStudy.gdgSpring.common.BaseTimeEntity;
 import gdgStudy.gdgSpring.post.dto.request.PostSaveRequestDto;
 import gdgStudy.gdgSpring.user.User;
+import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -24,14 +25,16 @@ public class Post extends BaseTimeEntity {
     private String content;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    public Post(PostSaveRequestDto postSaveRequestDto) {
+    public Post(PostSaveRequestDto postSaveRequestDto, User user) {
         this.title = postSaveRequestDto.getTitle();
         this.content = postSaveRequestDto.getContent();
-        this.user = postSaveRequestDto.getUser();
+        this.user = user;
     }
 
+    // 게시글 수정
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
