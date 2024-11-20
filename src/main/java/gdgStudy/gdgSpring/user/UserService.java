@@ -42,6 +42,7 @@ public class UserService {
     }
 
     // UPDATE (수정) - 옵셔널 처리
+    @Transactional
     public UserResponseDto updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
         User existingUser = userRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 유저가 없습니다. id = " + id));
