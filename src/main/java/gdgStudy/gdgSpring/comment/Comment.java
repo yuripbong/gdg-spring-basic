@@ -1,6 +1,6 @@
 package gdgStudy.gdgSpring.comment;
 
-import gdgStudy.gdgSpring.comment.dto.request.CommentSaveRequestDto;
+import gdgStudy.gdgSpring.comment.dto.request.CommentRequestDto;
 import gdgStudy.gdgSpring.post.Post;
 import gdgStudy.gdgSpring.user.User;
 import jakarta.persistence.*;
@@ -16,6 +16,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String comment;
 
     @ManyToOne
@@ -26,7 +27,7 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public Comment(CommentSaveRequestDto commentSaveRequestDto, User user, Post post) {
+    public Comment(CommentRequestDto commentSaveRequestDto, User user, Post post) {
         this.comment = commentSaveRequestDto.getComment();
         this.user = user;
         this.post = post;

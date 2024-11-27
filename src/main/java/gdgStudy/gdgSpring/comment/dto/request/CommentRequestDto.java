@@ -3,9 +3,10 @@ package gdgStudy.gdgSpring.comment.dto.request;
 import lombok.Getter;
 
 @Getter
-public class CommentSaveRequestDto {
+public class CommentRequestDto {
 
+    private Long id;
     private String comment;
-    private Long userId;
+    private String user;
     private Long postId;
 }

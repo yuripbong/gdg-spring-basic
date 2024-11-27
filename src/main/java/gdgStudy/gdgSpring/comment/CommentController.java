@@ -1,52 +1,56 @@
 package gdgStudy.gdgSpring.comment;
 
-import gdgStudy.gdgSpring.comment.dto.request.CommentSaveRequestDto;
-import gdgStudy.gdgSpring.comment.dto.request.CommentUpdateRequestDto;
+import gdgStudy.gdgSpring.comment.dto.request.CommentRequestDto;
 import gdgStudy.gdgSpring.comment.dto.response.CommentResponseDto;
-import gdgStudy.gdgSpring.comment.dto.response.CommentUpdateResponseDto;
-import gdgStudy.gdgSpring.post.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping("/api")
 @RestController
 public class CommentController {
 
     private final CommentService commentService;
-    private final PostService postService;
 
-    public CommentController(CommentService commentService, PostService postService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
-        this.postService = postService;
     }
 
     // 댓글 생성
-    @PostMapping("/comments/{postId}")
-    public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long postId, @RequestBody CommentSaveRequestDto commentSaveRequestDto) {
-        CommentResponseDto commentResponseDto = commentService.createComment(postId, commentSaveRequestDto);
+    @PostMapping("/users/{userId}/posts/{id}/comments")
+    public ResponseEntity<CommentResponseDto> save(@PathVariable Long userId, @PathVariable Long id, @RequestBody CommentRequestDto commentSaveRequestDto) {
+        CommentResponseDto commentResponseDto = commentService.save(id, commentSaveRequestDto, userId);
 
         return ResponseEntity.ok(commentResponseDto);
     }
 
+    // 댓글 읽어오기
+    @GetMapping("/posts/{id}/comments")
+    public ResponseEntity<List<CommentResponseDto>> read(@PathVariable Long id) {
+        List<CommentResponseDto> commentList = commentService.findAll(id);
+
+        return ResponseEntity.ok(commentList);
+    }
+
     // 댓글 수정
-    @PutMapping("/comments/{id}")
-    public ResponseEntity<?> updateComment(@PathVariable Long id, @RequestBody CommentUpdateRequestDto commentUpdateRequestDto) {
-        CommentUpdateResponseDto commentUpdateResponseDto = commentService.updateComment(id, commentUpdateRequestDto);
+    @PutMapping("/posts/{postsId}/comments/{id}")
+    public ResponseEntity<CommentResponseDto> update(@PathVariable Long postsId, @PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
+        CommentResponseDto commentResponseDto = commentService.update(postsId, id, commentRequestDto);
 
-        String message = (id == null) ? "잘못된 요청입니다." : "댓글이 수정되었습니다.";
-
-        return ResponseEntity.ok(message);
+        if (commentResponseDto != null) {
+            return ResponseEntity.ok(commentResponseDto);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // 댓글 삭제
-    @DeleteMapping("/comments/{id}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long id, @RequestParam String nickname) {
-        Long postId = commentService.deleteComment(id, nickname);
+    @DeleteMapping("posts/{postsId}/comments/{id}")
+    public ResponseEntity<Long> delete(@PathVariable Long postsId, @PathVariable Long id) {
+        commentService.delete(postsId, id);
 
-        String message = (postId == null) ? "작성자만 삭제 가능합니다." : "댓글이 삭제되었습니다.";
-
-        return ResponseEntity.ok(message);
+        return ResponseEntity.ok(id);
     }
 }

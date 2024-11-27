@@ -1,6 +1,6 @@
 package gdgStudy.gdgSpring.comment;
 
-import gdgStudy.gdgSpring.comment.dto.request.CommentSaveRequestDto;
+import gdgStudy.gdgSpring.comment.dto.request.CommentRequestDto;
 import gdgStudy.gdgSpring.comment.dto.response.CommentResponseDto;
 import gdgStudy.gdgSpring.post.Post;
 import gdgStudy.gdgSpring.post.PostRepository;
@@ -26,49 +26,54 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
-
     // 댓글 생성
-    public CommentResponseDto createComment(Long userId, Long postId, CommentSaveRequestDto commentSaveRequestDto) {
-        User user = userRepository.findById(commentSaveRequestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + commentSaveRequestDto.getUserId()));
+    public CommentResponseDto save(Long postId, CommentRequestDto commentRequestDto, Long userId) {
+        Optional<User> optUser = userRepository.findById(userId);
+        Optional<Post> optPost = postRepository.findById(postId);
 
-        Post post = postRepository.findById(commentSaveRequestDto.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 없습니다. id=" + commentSaveRequestDto.getPostId()));
+        if (optUser.isPresent() && optPost.isPresent()) {
+            Comment comment = new Comment(commentRequestDto, optUser.get(), optPost.get());
+            Comment savedComment = commentRepository.save(comment);
 
-        Comment comment = new Comment(commentSaveRequestDto, user, post);
-        Comment savedComment = commentRepository.save(comment);
-
-        return new CommentResponseDto(savedComment);
+            return new CommentResponseDto(Optional.of(savedComment));
+        }
+        return null;
     }
 
     // 조회
-    public List<CommentResponseDto> getAllComments(Long postId) {
-        List<Comment> comments = commentRepository.findAllByPostId(postId);
-
-        return comments.stream()
-                .map(CommentResponseDto::new)
-                .collect(Collectors.toList());
+    public Optional<List<CommentResponseDto>> findAll(Long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if (post.isPresent()) {
+            Optional<List<CommentResponseDto>> commentResponseDto = commentRepository.findAll(postId)
+                    .stream()
+                    .map(comment -> new CommentResponseDto(comment))
+                    .collect(Collectors.toList());
+            return commentResponseDto;
+        }
+        return null;
     }
 
     // 수정
     @Transactional
-    public CommentResponseDto updateComment(Long userId, Long commentId, CommentSaveRequestDto commentSaveRequestDto) {
-        Optional<Comment> optComment = commentRepository.findById(commentId);
-        Optional<User> user = userRepository.findById(commentSaveRequestDto.getUserId());
+    public CommentResponseDto update(Long postId, Long id, CommentRequestDto commentRequestDto) {
+        Optional<Comment> optComment = commentRepository.findById(id);
+        Optional<Post> optPost = postRepository.findById(postId);
 
-        if (optComment.isPresent() && user.isPresent()) {
-            Comment comment = optComment.get();
-            comment.update(commentSaveRequestDto.getComment());
+        if (optComment.isPresent() && optPost.isPresent()) {
+            optComment.get().update(
+                    commentRequestDto.getComment()
+            );
         }
-        return new CommentResponseDto(optComment.orElse(null));
+
+        return new CommentResponseDto(optComment);
     }
 
     // 삭제
-    public void deleteComment(Long userId, Long commentId) {
+    public void delete(Long postId, Long commentId) {
         Optional<Comment> optComment = commentRepository.findById(commentId);
-        Optional<User> user = userRepository.findById(userId);
+        Optional<Post> optPost = postRepository.findById(postId);
 
-        if (optComment.isPresent() && user.isPresent()) {
+        if (optComment.isPresent() && optPost.isPresent()) {
             commentRepository.delete(optComment.get());
         }
     }
