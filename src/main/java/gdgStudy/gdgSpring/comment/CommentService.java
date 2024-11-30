@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,53 +27,49 @@ public class CommentService {
 
     // 댓글 생성
     public CommentResponseDto save(Long postId, CommentRequestDto commentRequestDto, Long userId) {
-        Optional<User> optUser = userRepository.findById(userId);
-        Optional<Post> optPost = postRepository.findById(postId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다." + userId));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다." + postId));
 
-        if (optUser.isPresent() && optPost.isPresent()) {
-            Comment comment = new Comment(commentRequestDto, optUser.get(), optPost.get());
-            Comment savedComment = commentRepository.save(comment);
+        Comment comment = new Comment(commentRequestDto, user, post);
+        Comment savedComment = commentRepository.save(comment);
 
-            return new CommentResponseDto(Optional.of(savedComment));
-        }
-        return null;
+        return new CommentResponseDto(savedComment);
     }
 
-    // 조회
-    public Optional<List<CommentResponseDto>> findAll(Long postId) {
-        Optional<Post> post = postRepository.findById(postId);
-        if (post.isPresent()) {
-            Optional<List<CommentResponseDto>> commentResponseDto = commentRepository.findAll(postId)
-                    .stream()
-                    .map(comment -> new CommentResponseDto(comment))
-                    .collect(Collectors.toList());
-            return commentResponseDto;
-        }
-        return null;
+    // 댓글 조회
+    public List<CommentResponseDto> findAll(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다." + postId));
+
+        return commentRepository.findAllByPostId(postId).stream()
+                .map(CommentResponseDto::new)
+                .collect(Collectors.toList());
     }
 
-    // 수정
+    // 댓글 수정
     @Transactional
-    public CommentResponseDto update(Long postId, Long id, CommentRequestDto commentRequestDto) {
-        Optional<Comment> optComment = commentRepository.findById(id);
-        Optional<Post> optPost = postRepository.findById(postId);
+    public CommentResponseDto update(Long commentId, CommentRequestDto commentRequestDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다." + commentId));
+/*
+        // save 테스트
+        Comment updatedComment = commentRepository.save(comment);
+        System.out.println(updatedComment);
+*/
 
-        if (optComment.isPresent() && optPost.isPresent()) {
-            optComment.get().update(
-                    commentRequestDto.getComment()
-            );
-        }
-
-        return new CommentResponseDto(optComment);
+        comment.update(commentRequestDto.getComment());
+        return new CommentResponseDto(comment);
     }
 
-    // 삭제
-    public void delete(Long postId, Long commentId) {
-        Optional<Comment> optComment = commentRepository.findById(commentId);
-        Optional<Post> optPost = postRepository.findById(postId);
+    // 댓글 삭제
+    public boolean delete(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다." + commentId));
 
-        if (optComment.isPresent() && optPost.isPresent()) {
-            commentRepository.delete(optComment.get());
-        }
+        commentRepository.delete(comment);
+
+        return true;
     }
 }
