@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api")
+@RequestMapping("/api/comments") // 통일시키기
 @RestController
 public class CommentController {
 
@@ -19,15 +19,17 @@ public class CommentController {
     }
 
     // 댓글 생성
-    @PostMapping("/users/{userId}/posts/{id}/comments")
+    @PostMapping("/users/{userId}/posts/{id}")
     public ResponseEntity<CommentResponseDto> save(@PathVariable Long userId, @PathVariable Long id, @RequestBody CommentRequestDto commentSaveRequestDto) {
         CommentResponseDto commentResponseDto = commentService.save(id, commentSaveRequestDto, userId);
 
-        return ResponseEntity.ok(commentResponseDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(commentResponseDto);
     }
 
     // 댓글 읽어오기
-    @GetMapping("/posts/{id}/comments")
+    @GetMapping("/posts/{id}")
     public ResponseEntity<List<CommentResponseDto>> read(@PathVariable Long id) {
         List<CommentResponseDto> commentList = commentService.findAll(id);
 
@@ -35,9 +37,9 @@ public class CommentController {
     }
 
     // 댓글 수정
-    @PutMapping("/posts/{postsId}/comments/{id}")
-    public ResponseEntity<CommentResponseDto> update(@PathVariable Long postsId, @PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
-        CommentResponseDto commentResponseDto = commentService.update(postsId, id, commentRequestDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<CommentResponseDto> update(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto) {
+        CommentResponseDto commentResponseDto = commentService.update(id, commentRequestDto);
 
         if (commentResponseDto != null) {
             return ResponseEntity.ok(commentResponseDto);
@@ -47,10 +49,15 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    @DeleteMapping("posts/{postsId}/comments/{id}")
-    public ResponseEntity<Long> delete(@PathVariable Long postsId, @PathVariable Long id) {
-        commentService.delete(postsId, id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommentResponseDto> delete( @PathVariable Long id) {
+        boolean deleted = commentService.delete(id);
 
-        return ResponseEntity.ok(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 }
