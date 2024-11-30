@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByPostId(Long postId);
-    List<Comment> findAllByNickname(String nickname);
+    // 유저가 본인이 쓴 댓글
 }
