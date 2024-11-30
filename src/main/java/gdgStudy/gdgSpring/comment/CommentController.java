@@ -19,19 +19,27 @@ public class CommentController {
     }
 
     // 댓글 생성
-    @PostMapping("/users/{userId}/posts/{id}")
-    public ResponseEntity<CommentResponseDto> save(@PathVariable Long userId, @PathVariable Long id, @RequestBody CommentRequestDto commentSaveRequestDto) {
-        CommentResponseDto commentResponseDto = commentService.save(id, commentSaveRequestDto, userId);
+    @PostMapping("/{userId}/{postId}")
+    public ResponseEntity<CommentResponseDto> save(@PathVariable Long userId, @PathVariable Long postId, @RequestBody CommentRequestDto commentSaveRequestDto) {
+        CommentResponseDto commentResponseDto = commentService.save(postId, commentSaveRequestDto, userId);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(commentResponseDto);
     }
 
-    // 댓글 읽어오기
-    @GetMapping("/posts/{id}")
-    public ResponseEntity<List<CommentResponseDto>> read(@PathVariable Long id) {
-        List<CommentResponseDto> commentList = commentService.findAll(id);
+    // 댓글 읽어오기 - post별
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<List<CommentResponseDto>> readByPost(@PathVariable Long postId) {
+        List<CommentResponseDto> commentList = commentService.findAllByPosts(postId);
+
+        return ResponseEntity.ok(commentList);
+    }
+
+    // 댓글 읽어오기 - user별
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<List<CommentResponseDto>> readByUser(@PathVariable Long userId) {
+        List<CommentResponseDto> commentList = commentService.findAllByUser(userId);
 
         return ResponseEntity.ok(commentList);
     }

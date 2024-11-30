@@ -38,12 +38,22 @@ public class CommentService {
         return new CommentResponseDto(savedComment);
     }
 
-    // 댓글 조회
-    public List<CommentResponseDto> findAll(Long postId) {
+    // 댓글 조회 - post별
+    public List<CommentResponseDto> findAllByPosts(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다." + postId));
 
         return commentRepository.findAllByPostId(postId).stream()
+                .map(CommentResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    // 댓글 조회 - user별
+    public List<CommentResponseDto> findAllByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다." + userId));
+
+        return commentRepository.findAllByUserId(userId).stream()
                 .map(CommentResponseDto::new)
                 .collect(Collectors.toList());
     }
