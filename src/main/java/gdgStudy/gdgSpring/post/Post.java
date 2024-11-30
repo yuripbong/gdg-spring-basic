@@ -1,11 +1,13 @@
 package gdgStudy.gdgSpring.post;
 
+import gdgStudy.gdgSpring.comment.Comment;
 import gdgStudy.gdgSpring.common.BaseTimeEntity;
 import gdgStudy.gdgSpring.post.dto.request.PostSaveRequestDto;
 import gdgStudy.gdgSpring.user.User;
-import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @Entity(name = "posts")
@@ -16,7 +18,7 @@ public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_id;
+    private Long id;
 
     @Column(nullable = false)
     private String title;
@@ -28,6 +30,10 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments;
+
+    // 각 case별로 생성자가 만들어짐, User 객체 자체를 받아올 필요는 없음?
     public Post(PostSaveRequestDto postSaveRequestDto, User user) {
         this.title = postSaveRequestDto.getTitle();
         this.content = postSaveRequestDto.getContent();
