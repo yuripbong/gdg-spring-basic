@@ -1,12 +1,13 @@
 package gdgStudy.gdgSpring.user;
 
+import gdgStudy.gdgSpring.common.BaseTimeEntity;
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Entity(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
     // NoArgsConstructor 없애고 만든 기본 생성자
     public User() {}
@@ -27,11 +28,15 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
-    public User(UserSaveRequestDto userSaveRequestDto) {
-        this.username = userSaveRequestDto.getUsername();
-        this.password = userSaveRequestDto.getPassword();
-        this.email = userSaveRequestDto.getEmail();
-        this.nickname = userSaveRequestDto.getNickname();
+    private String role;
+
+    @Builder
+    public User(String username, String password, String email, String nickname, String role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+        this.role = role == null ? "ROLE_USER" : role;
     }
 
     public void update(String username, String password, String email, String nickname) {
