@@ -20,6 +20,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping
+    public String signUpProc(UserSaveRequestDto userSaveRequestDto) {
+
+        userService.signUpProc(userSaveRequestDto);
+
+        return "redirect:/login";
+    }
+/*
     // CREATE (생성)
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserSaveRequestDto userSaveRequestDto) {
@@ -29,6 +37,7 @@ public class UserController {
                 .status(HttpStatus.CREATED)
                 .body(userResponseDto);
     }
+*/
 
     // READ (조회)
     @GetMapping

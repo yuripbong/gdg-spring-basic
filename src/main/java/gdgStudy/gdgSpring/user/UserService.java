@@ -3,6 +3,8 @@ package gdgStudy.gdgSpring.user;
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
 import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
+import lombok.Builder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,18 +15,38 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 의존성 주입
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    public boolean signUpProc(UserSaveRequestDto userSaveRequestDto) {
+        boolean isExists = userRepository.existsByUsername(userSaveRequestDto.getUsername());
+
+        if (isExists) {
+            return false;
+        }
+
+        User user = User.builder()
+                .username(userSaveRequestDto.getUsername())
+                .password(passwordEncoder.encode(userSaveRequestDto.getPassword()))
+                .build();
+
+        userRepository.save(user);
+
+        return true;
+    }
+/*
     // CREATE (생성)
     public UserResponseDto createUser(UserSaveRequestDto userSaveRequestDto) {
         User user = new User(userSaveRequestDto); // 생성자 만듦 (새로운 엔티티)
         User savedUser = userRepository.save(user);
         return new UserResponseDto(savedUser);
     }
+*/
 
     // READ (조회)
     public List<UserResponseDto> getAllUsers() {
