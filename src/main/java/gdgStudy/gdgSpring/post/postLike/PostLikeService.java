@@ -21,7 +21,7 @@ public class PostLikeService {
     }
 
     // 좋아요 누르기
-    public void insert(PostLikeRequestDto postLikeRequestDto) throws Exception {
+    public void insert(PostLikeRequestDto postLikeRequestDto) {
 
         User user = userRepository.findById(postLikeRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id = " + postLikeRequestDto.getUserId()));
@@ -31,7 +31,7 @@ public class PostLikeService {
 
         // 이미 좋아요를 누른 경우 에러 반환
         if (postLikeRepository.findByUserAndPost(user, post).isPresent()) {
-            throw new Exception();
+            throw new IllegalStateException("이미 좋아요를 누른 상태입니다.");
         }
 
         PostLike postLike = PostLike.builder()
