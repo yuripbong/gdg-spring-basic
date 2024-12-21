@@ -38,6 +38,8 @@ public class PostLikeService {
                 .user(user)
                 .post(post)
                 .build();
+
+        postLikeRepository.save(postLike);
     }
 
     // 좋아요 취소
