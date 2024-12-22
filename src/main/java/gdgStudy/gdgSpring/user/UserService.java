@@ -3,8 +3,6 @@ package gdgStudy.gdgSpring.user;
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
 import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
-import lombok.Builder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
