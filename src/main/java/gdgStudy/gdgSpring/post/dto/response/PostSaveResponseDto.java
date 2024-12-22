@@ -7,11 +7,9 @@ import lombok.Getter;
 public class PostSaveResponseDto {
     private final String title;
     private final String content;
-    private final String nickname;
 
     public PostSaveResponseDto(Post post) {
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.nickname = post.getUser().getNickname();
     }
 }

@@ -24,20 +24,15 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    private String nickname;
-
     public User(UserSaveRequestDto userSaveRequestDto) {
         this.username = userSaveRequestDto.getUsername();
         this.password = userSaveRequestDto.getPassword();
         this.email = userSaveRequestDto.getEmail();
-        this.nickname = userSaveRequestDto.getNickname();
     }
 
-    public void update(String username, String password, String email, String nickname) {
+    public void update(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.nickname = nickname;
     }
 }
