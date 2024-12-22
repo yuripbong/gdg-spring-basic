@@ -15,38 +15,18 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     // 의존성 주입
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean signUpProc(UserSaveRequestDto userSaveRequestDto) {
-        boolean isExists = userRepository.existsByUsername(userSaveRequestDto.getUsername());
-
-        if (isExists) {
-            return false;
-        }
-
-        User user = User.builder()
-                .username(userSaveRequestDto.getUsername())
-                .password(passwordEncoder.encode(userSaveRequestDto.getPassword()))
-                .build();
-
-        userRepository.save(user);
-
-        return true;
-    }
-/*
     // CREATE (생성)
     public UserResponseDto createUser(UserSaveRequestDto userSaveRequestDto) {
         User user = new User(userSaveRequestDto); // 생성자 만듦 (새로운 엔티티)
         User savedUser = userRepository.save(user);
         return new UserResponseDto(savedUser);
     }
-*/
 
     // READ (조회)
     public List<UserResponseDto> getAllUsers() {
@@ -73,8 +53,7 @@ public class UserService {
         existingUser.update(
                 updateUserRequestDto.getUsername(),
                 updateUserRequestDto.getPassword(),
-                updateUserRequestDto.getEmail(),
-                updateUserRequestDto.getNickname());
+                updateUserRequestDto.getEmail());
 
         return new UserResponseDto(existingUser);
     }

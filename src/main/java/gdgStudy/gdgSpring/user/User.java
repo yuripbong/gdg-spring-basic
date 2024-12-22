@@ -25,24 +25,16 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    private String nickname;
-
-    private String role;
-
     @Builder
-    public User(String username, String password, String email, String nickname, String role) {
+    public User(UserSaveRequestDto userSaveRequestDto) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.nickname = nickname;
-        this.role = role == null ? "ROLE_USER" : role;
     }
 
-    public void update(String username, String password, String email, String nickname) {
+    public void update(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.nickname = nickname;
     }
 }
