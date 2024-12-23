@@ -3,10 +3,12 @@ package gdgStudy.gdgSpring.follow;
 import gdgStudy.gdgSpring.follow.dto.FollowDto;
 import gdgStudy.gdgSpring.user.User;
 import gdgStudy.gdgSpring.user.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class FollowService {
 
     private final FollowRepository followRepository;
@@ -18,21 +20,21 @@ public class FollowService {
     }
 
     // follow 요청
-    public String follow(User from_user, User to_user) {
+    public String follow(User fromUser, User toUser) {
 
         // 자기 자신 follow X
-        if (from_user.equals(to_user)) {
+        if (fromUser.getId().equals(toUser.getId())) {
             throw new IllegalArgumentException("자기 자신을 팔로우할 수 없습니다.");
         }
 
         // 중복 follow X
-        if (followRepository.findFollow(from_user, to_user).isPresent()) {
+        if (followRepository.findFollow(fromUser, toUser).isPresent()) {
             throw new IllegalArgumentException("이미 팔로우 했습니다.");
         }
 
         Follow follow = Follow.builder()
-                .toUser(to_user)
-                .fromUser(from_user)
+                .toUser(toUser)
+                .fromUser(fromUser)
                 .build();
 
         followRepository.save(follow);
@@ -83,7 +85,7 @@ public class FollowService {
     }
 
     // follow 취소
-    public String cacelFollow(User user) {
+    public String cancelFollow(User user) {
 
         followRepository.deleteByFromUser(user);
 
