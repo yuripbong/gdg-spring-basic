@@ -3,6 +3,7 @@ package gdgStudy.gdgSpring.user;
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
 import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,5 +73,16 @@ public class UserService {
         }
 
         return false;
+    }
+
+    // 로그인 인증
+    public UserResponseDto authenticateUser(UserSaveRequestDto userSaveRequestDto) {
+        Optional<User> userOpt = userRepository.findByUsername(userSaveRequestDto.getUsername());
+
+        if (userOpt.isPresent() && userOpt.get().getPassword().equals(userSaveRequestDto.getPassword())) {
+            return new UserResponseDto(userOpt.get());
+        }
+
+        return null; // 인증 실패
     }
 }

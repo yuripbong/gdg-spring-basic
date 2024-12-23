@@ -3,6 +3,7 @@ package gdgStudy.gdgSpring.user;
 import gdgStudy.gdgSpring.user.dto.request.UserSaveRequestDto;
 import gdgStudy.gdgSpring.user.dto.request.UserUpdateRequestDto;
 import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,5 +72,32 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDto> login(@RequestBody UserSaveRequestDto userSaveRequestDto, HttpSession session) {
+        UserResponseDto userResponseDto = userService.authenticateUser(userSaveRequestDto);
+
+        if (userResponseDto != null) {
+            session.setAttribute("user", userResponseDto);
+            return ResponseEntity.ok(userResponseDto);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpSession session) {
+        session.invalidate();
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // 현재 로그인한 사용자 정보 조회
+    @GetMapping("/current")
+    public ResponseEntity<UserResponseDto> getCurrentUser(@SessionAttribute("user") UserResponseDto userResponseDto) {
+        return ResponseEntity.ok(userResponseDto);
     }
 }
