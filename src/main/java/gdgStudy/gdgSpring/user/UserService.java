@@ -41,6 +41,12 @@ public class UserService {
                 .map(UserResponseDto::new);
     }
 
+    public Optional<UserResponseDto> getUserByUsername(String username) {
+
+        return userRepository.findByUsername(username)
+                .map(UserResponseDto::new);
+    }
+
     // UPDATE (수정) - 옵셔널 처리
     @Transactional
     public UserResponseDto updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
