@@ -42,6 +42,10 @@ public class UserService {
                 .map(UserResponseDto::new);
     }
 
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     // UPDATE (수정) - 옵셔널 처리
     @Transactional
     public UserResponseDto updateUser(Long id, UserUpdateRequestDto updateUserRequestDto) {
@@ -78,5 +82,10 @@ public class UserService {
         }
 
         return null; // 인증 실패
+    }
+
+    public User getCurrentUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("현재 사용자를 찾을 수 없습니다. username = " + username));
     }
 }

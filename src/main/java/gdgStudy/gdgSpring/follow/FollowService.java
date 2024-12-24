@@ -3,12 +3,10 @@ package gdgStudy.gdgSpring.follow;
 import gdgStudy.gdgSpring.follow.dto.FollowDto;
 import gdgStudy.gdgSpring.user.User;
 import gdgStudy.gdgSpring.user.UserRepository;
-import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FollowService {
@@ -21,22 +19,22 @@ public class FollowService {
         this.userRepository = userRepository;
     }
 
-    // follow 요청
+    // 팔로우
     public String follow(User fromUser, User toUser) {
 
-        // 자기 자신 follow X
-        if (fromUser.getId().equals(toUser.getId())) {
+        // 자기 자신 팔로우 X
+        if (fromUser.equals(toUser)) {
             throw new IllegalArgumentException("자기 자신을 팔로우할 수 없습니다.");
         }
 
-        // 중복 follow X
+        // 중복 팔로우 X
         if (followRepository.findFollow(fromUser, toUser).isPresent()) {
             throw new IllegalArgumentException("이미 팔로우 했습니다.");
         }
 
         Follow follow = Follow.builder()
-                .toUser(toUser)
                 .fromUser(fromUser)
+                .toUser(toUser)
                 .build();
 
         followRepository.save(follow);
@@ -44,51 +42,39 @@ public class FollowService {
         return "팔로우 성공";
     }
 
-    // following 리스트
-    public List<FollowDto> followingList(User selectUser, User requestUser) {
+    // 팔로잉 리스트
+    public List<FollowDto> followingList(User fromUser) {
 
-        List<Follow> list = followRepository.findByFromUser(selectUser);
+        List<Follow> list = followRepository.findByFromUser(fromUser);
         List<FollowDto> followList = new ArrayList<>();
 
         for (Follow follow : list) {
-            followList.add(new FollowDto(follow.getFromUser().getUsername(), findStatus(follow.getFromUser(), requestUser)));
+            followList.add(new FollowDto(follow.getFromUser().getUsername()));
         }
 
         return followList;
     }
 
-    // follower 리스트
-    public List<FollowDto> followerList(User selectUser, User requestUser) {
+    // 팔로워 리스트
+    public List<FollowDto> followerList(User toUser) {
 
-        List<Follow> list = followRepository.findByFromUser(selectUser);
-        List<FollowDto> followList = new ArrayList<>();
+        List<Follow> list = followRepository.findByToUser(toUser);
+        List<FollowDto> followerList = new ArrayList<>();
 
         for (Follow follow : list) {
-            followList.add(userRepository.findByUsername(follow.getFromUser().getUsername())
-                    .orElseThrow().toFollow(findStatus(follow.getFromUser(), requestUser)));
+            followerList.add(new FollowDto(follow.getToUser().getUsername()));
         }
 
         return followerList;
     }
 
-    // A와 B의 관계
-    protected String findStatus(User selectUser, User requestUser) {
-
-        if ((selectUser.getUsername()).equals(requestUser.getUsername())) {
-            return "본인";
+    // 팔로우 취소
+    public String unfollow(User fromUser, User toUser) {
+        if (fromUser.equals(toUser)) {
+            throw new IllegalArgumentException("자기 자신을 언팔로우할 수 없습니다.");
         }
 
-        if (followRepository.findFollow(selectUser, requestUser).isEmpty()) {
-            return "없음";
-        }
-
-        return "팔로잉";
-    }
-
-    // follow 취소
-    public String cancelFollow(User user) {
-
-        followRepository.deleteByFromUser(user);
+        followRepository.unfollowByFromUser(fromUser);
 
         return "언팔로우 성공";
     }

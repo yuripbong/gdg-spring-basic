@@ -4,7 +4,9 @@ import gdgStudy.gdgSpring.common.BaseTimeEntity;
 import gdgStudy.gdgSpring.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Follow extends BaseTimeEntity {
 
