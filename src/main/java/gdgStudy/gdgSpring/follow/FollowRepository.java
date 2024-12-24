@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
+    // 본인
     List<Follow> findByFromUser(User fromUser);
     List<Follow> findByToUser(User toUser);
     void deleteByFromUser(User fromUser);

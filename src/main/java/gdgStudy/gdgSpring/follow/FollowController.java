@@ -24,10 +24,19 @@ public class FollowController {
 
     // 팔로우
     @PostMapping("/{myName}/to/{friendName}")
-    public ResponseEntity<?> follow(@PathVariable String friendName, @PathVariable String myName) {
+    public ResponseEntity<?> follow(@PathVariable String myName, @PathVariable String friendName) {
 
-        Optional<UserResponseDto> fromUser = userService.getUserByUsername(myName);
-        Optional<UserResponseDto> toUser = userService.getUserByUsername(friendName);
+        User fromUser = userService.getUserByUsername(myName);
+
+        if (fromUser == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다." + myName);
+        }
+
+        User toUser = userService.getUserByUsername(friendName);
+
+        if (toUser == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다." + friendName);
+        }
 
         followService.follow(fromUser, toUser);
 
@@ -35,18 +44,18 @@ public class FollowController {
     }
 
     // 팔로잉 조회
-    @GetMapping("/{username}/following")
-    public ResponseEntity<List<FollowDto>> getFollowingList(@PathVariable String username) {
-        User fromUser = userService.getUserByUsername(username);
-        User requestUser = userService.findUser();
+    @GetMapping("/{myName}/following")
+    public ResponseEntity<List<FollowDto>> getFollowingList(@PathVariable String myName) {
+        User fromUser = userService.getUserByUsername(myName);
+        User requestUser = userService.getUserByUsername();
 
         return ResponseEntity.ok().body(followService.followingList(fromUser, requestUser));
     }
 
     // 팔로워 조회
-    @GetMapping("/{username}/follower")
-    public ResponseEntity<List<FollowDto>> getFollowerList(@PathVariable String username) {
-        User toUser = userService.getUserByUsername(username)
+    @GetMapping("/{friendName}/follower")
+    public ResponseEntity<List<FollowDto>> getFollowerList(@PathVariable String friendName) {
+        User toUser = userService.getUserByUsername(friendName)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         User requestUser = userService.getUserByUsername();

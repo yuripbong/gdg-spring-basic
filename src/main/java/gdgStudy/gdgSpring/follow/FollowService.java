@@ -3,10 +3,12 @@ package gdgStudy.gdgSpring.follow;
 import gdgStudy.gdgSpring.follow.dto.FollowDto;
 import gdgStudy.gdgSpring.user.User;
 import gdgStudy.gdgSpring.user.UserRepository;
+import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FollowService {
@@ -49,8 +51,7 @@ public class FollowService {
         List<FollowDto> followList = new ArrayList<>();
 
         for (Follow follow : list) {
-            followList.add(userRepository.findByUsername(follow.getToUser().getUsername())
-                    .orElseThrow().toFollow(findStatus(follow.getToUser(), requestUser)));
+            followList.add(new FollowDto(follow.getFromUser().getUsername(), findStatus(follow.getFromUser(), requestUser)));
         }
 
         return followList;
