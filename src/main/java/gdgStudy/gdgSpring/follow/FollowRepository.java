@@ -13,7 +13,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     // 팔로잉 조회
     List<Follow> findByToUser(User toUser);
     // 팔로우 취소
-    void unfollowByFromUser(User fromUser);
+    void unfollowByFromUserAndToUser(User fromUser, User toUser);
     // fromUser가 toUser를 팔로우하는 관계 조회
-    Optional<Follow> findByFromUserAndToUser(User fromUser, User toUser);
+    Optional<Follow> findFollow(User fromUser, User toUser);
 }

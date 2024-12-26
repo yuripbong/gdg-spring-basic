@@ -26,26 +26,24 @@ public class FollowController {
     // 팔로우
     @PostMapping("/{myName}/to/{friendName}")
     public ResponseEntity<?> follow(@PathVariable String myName, @PathVariable String friendName) {
+        User fromUser = userService.getUserByUsername(myName)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        Optional<User> fromUser = userService.getUserByUsername(myName);
-        Optional<User> toUser = userService.getUserByUsername(friendName);
+        User toUser = userService.getUserByUsername(friendName)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        if (fromUser.isPresent() && toUser.isPresent()) {
-            followService.follow(fromUser, toUser);
-            return ResponseEntity.ok().build();
-        }
+        followService.follow(fromUser, toUser);
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().build();
     }
 
     // 팔로잉 리스트
     @GetMapping("/{username}/following")
     public ResponseEntity<List<FollowDto>> getFollowingList(@PathVariable String username) {
-        Optional<User> fromUser = userService.getUserByUsername(username);
+        User fromUser = userService.getUserByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        if (fromUser.isPresent()) {
-            return ResponseEntity.ok().body(followService.followingList(fromUser));
-        }
+        followService.followingList(fromUser);
 
         return ResponseEntity.notFound().build();
     }
@@ -53,11 +51,10 @@ public class FollowController {
     // 팔로워 리스트
     @GetMapping("/{username}/follower")
     public ResponseEntity<List<FollowDto>> getFollowerList(@PathVariable String username) {
-        Optional<User> fromUser = userService.getUserByUsername(username);
+        User toUser = userService.getUserByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        if (fromUser.isPresent()) {
-            return ResponseEntity.ok().body(followService.followerList(fromUser));
-        }
+        followService.followerList(toUser);
 
         return ResponseEntity.notFound().build();
     }
@@ -65,14 +62,15 @@ public class FollowController {
     // 팔로우 취소
     @DeleteMapping("/{friendName}/{username}")
     public ResponseEntity<String> unfollow(@PathVariable String friendName, @PathVariable String username) {
-        Optional<User> fromUser = userService.getUserByUsername(username);
-        Optional<User> toUser = userService.getUserByUsername(friendName);
+        User fromUser = userService.getUserByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        if (fromUser.isPresent() && toUser.isPresent()) {
-            return ResponseEntity.ok().body(followService.unfollow(fromUser));
-        }
+        User toUser = userService.getUserByUsername(friendName)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        return ResponseEntity.notFound().build();
+        followService.unfollow(fromUser, toUser);
+
+        return ResponseEntity.ok().build();
     }
 
 }

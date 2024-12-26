@@ -74,7 +74,7 @@ public class FollowService {
             throw new IllegalArgumentException("자기 자신을 언팔로우할 수 없습니다.");
         }
 
-        followRepository.unfollowByFromUser(fromUser);
+        followRepository.unfollowByFromUserAndToUser(fromUser, toUser);
 
         return "언팔로우 성공";
     }
