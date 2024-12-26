@@ -50,6 +50,13 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+        return userService.getUserByUsername(username)
+                .map(user -> ResponseEntity.ok(user))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // UPDATE (수정)
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequestDto updateUserRequestDto) {
@@ -90,7 +97,7 @@ public class UserController {
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpSession session) {
-        session.invalidate();
+        session.invalidate(); // 세션 무효화
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -4,7 +4,9 @@ import gdgStudy.gdgSpring.common.BaseTimeEntity;
 import gdgStudy.gdgSpring.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Follow extends BaseTimeEntity {
 
@@ -14,11 +16,11 @@ public class Follow extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_user")
     private User fromUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_user")
     private User toUser;
 

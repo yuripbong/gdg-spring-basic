@@ -29,10 +29,10 @@ public class User extends BaseTimeEntity {
     private String email;
 
     // 팔로우
-    @OneToMany(mappedBy = "from_user")
+    @OneToMany(mappedBy = "fromUser")
     private List<Follow> followings;
 
-    @OneToMany(mappedBy = "to_user")
+    @OneToMany(mappedBy = "toUser")
     private List<Follow> followers;
 
     public User(UserSaveRequestDto userSaveRequestDto) {

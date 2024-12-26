@@ -1,67 +1,69 @@
 package gdgStudy.gdgSpring.follow;
 
+
 import gdgStudy.gdgSpring.follow.dto.FollowDto;
 import gdgStudy.gdgSpring.user.User;
 import gdgStudy.gdgSpring.user.UserService;
-import gdgStudy.gdgSpring.user.dto.response.UserResponseDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@RequestMapping("/api/follow")
 @RestController
+@RequestMapping("/api/follow")
 public class FollowController {
 
-    private final UserService userService;
+    // 의존성 주입
     private final FollowService followService;
+    private final UserService userService;
 
-    public FollowController(UserService userService, FollowService followService) {
-        this.userService = userService;
+    public FollowController(FollowService followService, UserService userService) {
         this.followService = followService;
+        this.userService = userService;
     }
 
     // 팔로우
     @PostMapping("/{myName}/to/{friendName}")
-    public ResponseEntity<?> follow(@PathVariable String friendName, @PathVariable String myName) {
+    public ResponseEntity<String> follow(@PathVariable String myName, @PathVariable String friendName) {
+        User fromUser = userService.getUserByUsername(myName)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        Optional<UserResponseDto> fromUser = userService.getUserByUsername(myName);
-        Optional<UserResponseDto> toUser = userService.getUserByUsername(friendName);
+        User toUser = userService.getUserByUsername(friendName)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        followService.follow(fromUser, toUser);
+        String result = followService.follow(fromUser, toUser);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(result);
     }
 
-    // 팔로잉 조회
+    // 팔로잉 리스트
     @GetMapping("/{username}/following")
     public ResponseEntity<List<FollowDto>> getFollowingList(@PathVariable String username) {
-        User fromUser = userService.getUserByUsername(username);
-        User requestUser = userService.findUser();
+        User fromUser = userService.getUserByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        return ResponseEntity.ok().body(followService.followingList(fromUser, requestUser));
+        List<FollowDto> followingList =  followService.followingList(fromUser);
+
+        return ResponseEntity.ok(followingList);
     }
 
-    // 팔로워 조회
+    // 팔로워 리스트
     @GetMapping("/{username}/follower")
     public ResponseEntity<List<FollowDto>> getFollowerList(@PathVariable String username) {
         User toUser = userService.getUserByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        User requestUser = userService.getUserByUsername();
+        List<FollowDto> followerList = followService.followerList(toUser);
 
-        return ResponseEntity.ok().body(followService.followerList(toUser, requestUser));
+        return ResponseEntity.ok(followerList);
     }
 
     // 팔로우 취소
-    @DeleteMapping("/{friendName}/{username}")
-    public ResponseEntity<String> deleteFollow(@PathVariable String friendName, @PathVariable String username) {
+    @DeleteMapping("/{followId}")
+    public ResponseEntity<String> unfollow(@PathVariable Long followId) {
+        followService.unfollow(followId);
 
-        return ResponseEntity.ok().body(followService.cancelFollow(userService.getUserByUsername()));
+        return ResponseEntity.noContent().build();
     }
-
-
-
 
 }
