@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/follow")
@@ -25,16 +24,16 @@ public class FollowController {
 
     // 팔로우
     @PostMapping("/{myName}/to/{friendName}")
-    public ResponseEntity<?> follow(@PathVariable String myName, @PathVariable String friendName) {
+    public ResponseEntity<String> follow(@PathVariable String myName, @PathVariable String friendName) {
         User fromUser = userService.getUserByUsername(myName)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
         User toUser = userService.getUserByUsername(friendName)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        followService.follow(fromUser, toUser);
+        String result = followService.follow(fromUser, toUser);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(result);
     }
 
     // 팔로잉 리스트
@@ -43,9 +42,9 @@ public class FollowController {
         User fromUser = userService.getUserByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        followService.followingList(fromUser);
+        List<FollowDto> followingList =  followService.followingList(fromUser);
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(followingList);
     }
 
     // 팔로워 리스트
@@ -54,9 +53,9 @@ public class FollowController {
         User toUser = userService.getUserByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
 
-        followService.followerList(toUser);
+        List<FollowDto> followerList = followService.followerList(toUser);
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(followerList);
     }
 
     // 팔로우 취소
