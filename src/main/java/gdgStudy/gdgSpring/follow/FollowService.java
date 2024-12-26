@@ -66,11 +66,11 @@ public class FollowService {
     }
 
     // 팔로우 취소
-    public void unfollow(User fromUser, User toUser) {
-        if (fromUser.equals(toUser)) {
-            throw new IllegalArgumentException("자기 자신을 언팔로우할 수 없습니다.");
-        }
+    public void unfollow(Long followId) {
+        Follow follow = followRepository.findById(followId)
+                .orElseThrow(() -> new IllegalArgumentException("오류"));
 
-        followRepository.deleteFollowByFromUser(fromUser);
+        followRepository.delete(follow);
     }
+
 }

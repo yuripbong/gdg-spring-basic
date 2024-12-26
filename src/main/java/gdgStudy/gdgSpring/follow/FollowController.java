@@ -59,17 +59,11 @@ public class FollowController {
     }
 
     // 팔로우 취소
-    @DeleteMapping("/{friendName}/{username}")
-    public ResponseEntity<String> unfollow(@PathVariable String friendName, @PathVariable String username) {
-        User fromUser = userService.getUserByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+    @DeleteMapping("/{followId}")
+    public ResponseEntity<String> unfollow(@PathVariable Long followId) {
+        followService.unfollow(followId);
 
-        User toUser = userService.getUserByUsername(friendName)
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
-
-        followService.unfollow(fromUser, toUser);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
