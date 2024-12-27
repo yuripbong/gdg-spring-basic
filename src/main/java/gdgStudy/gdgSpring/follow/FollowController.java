@@ -54,7 +54,7 @@ public class FollowController {
 
         User requestUser = userService.getCurrentUser(loggedUser.getUsername());
 
-        List<FollowDto> followingList =  followService.followingList(fromUser, requestUser);
+        List<FollowDto> followingList =  followService.followingList(fromUser);
 
         return ResponseEntity.ok(followingList);
     }
@@ -75,7 +75,7 @@ public class FollowController {
         User requestUser = userService.getCurrentUser(loggedUser.getUsername());
 
 
-        List<FollowDto> followerList = followService.followerList(toUser, requestUser);
+        List<FollowDto> followerList = followService.followerList(toUser);
 
         return ResponseEntity.ok(followerList);
     }

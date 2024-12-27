@@ -40,8 +40,8 @@ public class FollowService {
     }
 
     // 팔로잉 리스트
-    public List<FollowDto> followingList(User fromUser, User requestUser) {
-        List<Follow> list = followRepository.findByFromUser(requestUser);
+    public List<FollowDto> followingList(User selectUser) {
+        List<Follow> list = followRepository.findByFromUser(selectUser);
         List<FollowDto> followList = new ArrayList<>();
 
         for (Follow follow : list) {
@@ -56,8 +56,8 @@ public class FollowService {
     }
 
     // 팔로워 리스트
-    public List<FollowDto> followerList(User toUser, User requestUser) {
-        List<Follow> list = followRepository.findByToUser(toUser);
+    public List<FollowDto> followerList(User selectUser) {
+        List<Follow> list = followRepository.findByToUser(selectUser);
         List<FollowDto> followerList = new ArrayList<>();
 
         for (Follow follow : list) {
