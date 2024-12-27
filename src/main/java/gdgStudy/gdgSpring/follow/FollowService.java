@@ -2,7 +2,6 @@ package gdgStudy.gdgSpring.follow;
 
 import gdgStudy.gdgSpring.follow.dto.FollowDto;
 import gdgStudy.gdgSpring.user.User;
-import gdgStudy.gdgSpring.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,11 +11,9 @@ import java.util.List;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final UserRepository userRepository;
 
-    public FollowService(FollowRepository followRepository, UserRepository userRepository) {
+    public FollowService(FollowRepository followRepository) {
         this.followRepository = followRepository;
-        this.userRepository = userRepository;
     }
 
     // 팔로우
