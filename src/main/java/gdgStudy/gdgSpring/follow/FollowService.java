@@ -40,29 +40,47 @@ public class FollowService {
     }
 
     // 팔로잉 리스트
-    public List<FollowDto> followingList(User fromUser) {
-
-        List<Follow> list = followRepository.findByFromUser(fromUser);
+    public List<FollowDto> followingList(User fromUser, User requestUser) {
+        List<Follow> list = followRepository.findByFromUser(requestUser);
         List<FollowDto> followList = new ArrayList<>();
 
         for (Follow follow : list) {
-            followList.add(new FollowDto(follow.getFromUser().getUsername()));
+            User toUser = follow.getToUser();
+            FollowDto followDto = new FollowDto(
+                    toUser.getUsername()
+            );
+            followList.add(followDto); // FollowDto 객체를 직접 생성하여 추가
         }
 
         return followList;
     }
 
     // 팔로워 리스트
-    public List<FollowDto> followerList(User toUser) {
-
+    public List<FollowDto> followerList(User toUser, User requestUser) {
         List<Follow> list = followRepository.findByToUser(toUser);
         List<FollowDto> followerList = new ArrayList<>();
 
         for (Follow follow : list) {
-            followerList.add(new FollowDto(follow.getToUser().getUsername()));
+            User fromUser = follow.getFromUser();
+            FollowDto followDto = new FollowDto(
+                    fromUser.getUsername()
+            );
+            followerList.add(followDto); // FollowDto 객체를 직접 생성하여 추가
         }
 
         return followerList;
+    }
+
+    // 팔로우 관계
+    protected String findStatus(User selectUser, User requestUser) {
+        if (selectUser.getUsername().equals(requestUser.getUsername())) {
+            return "self";
+        }
+        if (followRepository.findFollow(selectUser, requestUser).isEmpty()) {
+            return "none";
+        }
+
+        return "following";
     }
 
     // 팔로우 취소
